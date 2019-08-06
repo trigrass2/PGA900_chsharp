@@ -422,6 +422,16 @@ public enum OperationMessage_t
             return 0;
         }
 
+        static UInt16 ReadGa()
+        {
+            uint168_t _tempVar;
+            _tempVar.uintb0 = 0x00;
+            _tempVar.uintb1 = 0x00;
+            _tempVar.uinta = 0X0000;
+            _tempVar.uinta = Read2BytesFromPga900();
+            return _tempVar.uinta;
+        }
+
         static byte SwitchGaState()
         {
             SendCMDToPGA((UInt16)Constants.StateOfOperation_t.Gasanalysis);
@@ -437,17 +447,18 @@ public enum OperationMessage_t
             return 1;
         }
 
+
         static void GasMain()
         {
             SwitchGaState();
-            //Sleep(1);
+            System.Threading.Thread.Sleep(50);
             //StartGa();
-            //Sleep(1);
-            //while (1)
-            //{
-            //    Sleep(10);
-            //    printf("Data %d\n", ReadGa());
-            //}
+            System.Threading.Thread.Sleep(50);
+            for(int i = 0; i < 10; i++)
+            {
+                System.Threading.Thread.Sleep(50);
+                Console.WriteLine("Data {0}", ReadGa());
+            }
         }
 
         static void Main(string[] args)
