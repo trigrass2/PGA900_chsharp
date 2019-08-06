@@ -387,17 +387,14 @@ public enum OperationMessage_t
             uint168_t data;
             data.uinta = 0x0000;
             UInt16 max_trys = 0;
-            while (ReadTxStatus()==0 || (max_trys > 999)) { max_trys++; }
-            if (max_trys >= 999)
-            {
-                return 0;
-            }
+            while (ReadTxStatus()==0 && (max_trys > 10)) 
+		{ max_trys++; }
 
             for (int i = 2; i > 0; i--)
             {
-                Uca0SpiSendRec(0x00, false);
-                data.uintb1 = Uca0SpiSendRec(0x80, false);
-                data.uintb0 = Uca0SpiSendRec(0x00, true);
+                Uca0SpiSendRec(Constants.r2Bpga_firstbyte, false);
+                data.uintb1 = Uca0SpiSendRec(Constants.r2Bpga_secondbyte, false);
+                data.uintb0 = Uca0SpiSendRec(Constants.r2Bpga_thirdbyte, true);
             }
 
             SetTxStatus();
@@ -412,12 +409,12 @@ public enum OperationMessage_t
             cmd.uinta = CMD;
 
             Write2BytesToPga900(cmd.uintb0, cmd.uintb1);
-            Console.Write("Sent {0:X} {1:X} ", cmd.uintb0, cmd.uintb1);
+            Console.WriteLine("Sent {0:X} {1:X} ", cmd.uintb1, cmd.uintb0);
             uint168_t response_co2;
             response_co2.uinta = Read2BytesFromPga900();
             response_co2.uintb0 = 0x00;
             response_co2.uintb1 = 0x01;
-            Console.WriteLine("Response {0:X} {1:X}", response_co2.uintb0, response_co2.uintb1);
+            Console.WriteLine("Response {0:X} {1:X}", response_co2.uintb1, response_co2.uintb0);
             if (response_co2.uinta == CMD)
             {
                 return 1;
